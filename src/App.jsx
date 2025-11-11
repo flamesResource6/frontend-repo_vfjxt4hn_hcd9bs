@@ -1,24 +1,38 @@
 import { useState } from 'react'
+import Sidebar from './components/Sidebar'
+import Topbar from './components/Topbar'
+import { motion, AnimatePresence } from 'framer-motion'
+import { DashboardHome, KnowledgePanel, PromptService, ApiRest, DocumentPanel, UpgradePlan, ChatbotShapeTab } from './components/DashboardViews'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [active, setActive] = useState('dashboard')
+
+  const renderView = () => {
+    switch(active){
+      case 'dashboard': return <DashboardHome />
+      case 'knowledge': return <KnowledgePanel />
+      case 'prompts': return <PromptService />
+      case 'api': return <ApiRest />
+      case 'documents': return <DocumentPanel />
+      case 'upgrade': return <UpgradePlan />
+      case 'chatbot': return <ChatbotShapeTab />
+      default: return <DashboardHome />
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-          >
-            Count is {count}
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-orange-50">
+      <div className="flex min-h-screen">
+        <Sidebar active={active} onSelect={setActive} />
+        <div className="flex-1 flex flex-col">
+          <Topbar />
+          <main className="p-6">
+            <AnimatePresence mode="wait">
+              <motion.div key={active} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }}>
+                {renderView()}
+              </motion.div>
+            </AnimatePresence>
+          </main>
         </div>
       </div>
     </div>
